@@ -8,8 +8,8 @@ import com.dvir.docsync.docs.domain.model.Character
 import com.dvir.docsync.docs.domain.model.Document
 
 class DocumentManager(
-    private var document: Document,
-    private val cursorManager: CursorManager
+    private val document: Document,
+    private val cursorManager: CursorManager,
 ) {
     @Synchronized
     fun addCharacter(character: Character, username: String) {
@@ -18,9 +18,10 @@ class DocumentManager(
 
         if (endPos != null) {
             removeSelection(username, startPos, endPos)
+            cursorManager.updatePosition(username, startPos)
         }
 
-        document = document.addCharacter(startPos, character)
+        document.addCharacter(startPos, character)
 
         cursorManager.adjustCursors(startPos, CursorAction.Add)
 
@@ -38,7 +39,7 @@ class DocumentManager(
             return
         }
 
-        document = document.removeCharacter(startPos, length)
+        document.removeCharacters(startPos, length)
 
         val removeIndex = positionToIndex(startPos) - length
         val removePosition = indexToPosition(removeIndex)
@@ -56,9 +57,7 @@ class DocumentManager(
             throw IllegalArgumentException("Start position must be before end position")
         }
 
-        document = document.copy(content = document.content.toMutableList().apply {
-            subList(startIndex, endIndex).clear()
-        })
+        document.content.subList(startIndex, endIndex).clear()
 
         for (i in startIndex until endIndex) {
             val position = indexToPosition(i)
@@ -71,9 +70,7 @@ class DocumentManager(
     private fun insertCharacter(character: Character, position: CursorPosition, username: String) {
         val insertIndex = positionToIndex(position)
 
-        document = document.copy(content = document.content.toMutableList().apply {
-            add(insertIndex, character)
-        })
+       document.content.add(insertIndex, character)
 
         val actionPosition = CursorPosition(line = position.line, column = position.column)
         cursorManager.adjustCursors(actionPosition, CursorAction.Add)

@@ -13,26 +13,20 @@ data class Document(
     val owner: String,
     val name: String,
     val creationDate: Long,
-    val content: List<Character> = emptyList()
+    val content: MutableList<Character> = mutableListOf()
 ) {
-    fun addCharacter(position: CursorPosition, character: Character): Document {
+    fun addCharacter(position: CursorPosition, character: Character) {
         val index = positionToIndex(position)
-        val newContent = content.toMutableList().apply {
-            add(index, character)
-        }
-        return copy(content = newContent)
+        content.add(index, character)
     }
 
-    fun removeCharacter(position: CursorPosition, length: Int): Document {
+    fun removeCharacters(position: CursorPosition, length: Int) {
         val index = positionToIndex(position)
         if (index - length < 0) {
             throw IllegalArgumentException("Cannot remove more characters than available before cursor")
         }
         val fromIndex = index - length
-        val newContent = content.toMutableList().apply {
-            subList(fromIndex, index).clear()
-        }
-        return copy(content = newContent)
+        content.subList(fromIndex, index).clear()
     }
 
     private fun positionToIndex(position: CursorPosition): Int {
