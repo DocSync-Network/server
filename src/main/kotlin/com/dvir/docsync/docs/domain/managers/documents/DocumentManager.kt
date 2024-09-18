@@ -1,4 +1,4 @@
-package com.dvir.docsync.docs.domain.managers
+package com.dvir.docsync.docs.domain.managers.documents
 
 import com.dvir.docsync.core.constants.Constants
 import com.dvir.docsync.docs.domain.managers.cursor.CursorAction
@@ -10,7 +10,10 @@ import com.dvir.docsync.docs.domain.model.Document
 class DocumentManager(
     private val document: Document,
     private val cursorManager: CursorManager,
+    var activeUsers: Int = 1
 ) {
+    fun getCursorManager(): CursorManager = cursorManager
+
     @Synchronized
     fun addCharacter(character: Character, username: String) {
         val cursorData = cursorManager.getCursors()[username] ?: return

@@ -6,7 +6,5 @@ data class User(
     val username: String,
     val password: String,
     val salt: String,
-
-    val data: UserData,
     val id: ID? = null
 )

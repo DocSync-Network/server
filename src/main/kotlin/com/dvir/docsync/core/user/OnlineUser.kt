@@ -1,4 +1,4 @@
-package com.dvir.docsync.docs.domain.managers.user
+package com.dvir.docsync.core.user
 
 import io.ktor.websocket.*
 

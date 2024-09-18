@@ -2,28 +2,34 @@ package com.dvir.docsync.plugins
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
+import com.dvir.docsync.auth.domain.token.TokenConfig
+import io.ktor.http.auth.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
-import io.ktor.server.response.*
 
-fun Application.configureSecurity() {
-    val jwtAudience = "jwt-audience"
-    val jwtDomain = "https://jwt-provider-domain/"
+fun Application.configureSecurity(config: TokenConfig) {
     val jwtRealm = "docsync"
-    val jwtSecret = "secret"
     authentication {
         jwt {
             realm = jwtRealm
             verifier(
                 JWT
-                    .require(Algorithm.HMAC256(jwtSecret))
-                    .withAudience(jwtAudience)
-                    .withIssuer(jwtDomain)
+                    .require(Algorithm.HMAC256(config.secret))
+                    .withAudience(config.audience)
+                    .withIssuer(config.issuer)
                     .build()
             )
             validate { credential ->
-                if (credential.payload.audience.contains(jwtAudience)) JWTPrincipal(credential.payload) else null
+                if (credential.payload.audience.contains(config.audience)) JWTPrincipal(credential.payload) else null
+            }
+            authHeader { call ->
+                val token = call.request.queryParameters["token"]
+                if (token != null) {
+                    HttpAuthHeader.Single("Bearer", token)
+                } else {
+                    null
+                }
             }
         }
     }

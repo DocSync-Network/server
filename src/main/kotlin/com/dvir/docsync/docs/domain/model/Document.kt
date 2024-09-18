@@ -6,6 +6,10 @@ import kotlinx.serialization.Serializable
 import org.bson.codecs.pojo.annotations.BsonId
 import org.bson.types.ObjectId
 
+/**
+ * Represents a document with editable content and access control.
+ * @property access A list of usernames that have access to this document.
+ */
 @Serializable
 data class Document(
     @BsonId
@@ -13,6 +17,7 @@ data class Document(
     val owner: String,
     val name: String,
     val creationDate: Long,
+    val access: MutableList<String>,
     val content: MutableList<Character> = mutableListOf()
 ) {
     fun addCharacter(position: CursorPosition, character: Character) {

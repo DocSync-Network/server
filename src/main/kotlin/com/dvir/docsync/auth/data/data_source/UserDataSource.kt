@@ -14,8 +14,8 @@ class UserDataSource(
         return users.findOne(UserEntity::username eq username)
     }
 
-    suspend fun getUserById(id: String): UserEntity? {
-        return users.findOneById(UserEntity::id eq id)
+    suspend fun getUserById(id: ID): UserEntity? {
+        return users.findOneById(id)
     }
 
     suspend fun getAllUsers(): List<UserEntity> {

@@ -9,6 +9,7 @@ import com.dvir.docsync.auth.domain.security.HashingService
 import com.dvir.docsync.auth.domain.token.TokenConfig
 import com.dvir.docsync.auth.domain.token.TokenService
 import com.dvir.docsync.docs.data.DocsDataSource
+import com.dvir.docsync.docs.domain.managers.documents.DocumentsManager
 import org.litote.kmongo.coroutine.coroutine
 import org.litote.kmongo.reactivestreams.KMongo
 
@@ -33,7 +34,7 @@ object ServiceLocator {
         val userDataSource = UserDataSource(database)
         val docsDataSource = DocsDataSource(database)
         val hashingService = SHA256HashingService()
-        val userRepository = UserRepositoryImpl(userDataSource)
+
         val tokenService = JwtTokenService()
         val tokenConfig = TokenConfig(
             issuer = "http://0.0.0.0:8080",
@@ -45,9 +46,16 @@ object ServiceLocator {
         register<UserDataSource>(userDataSource)
         register<DocsDataSource>(docsDataSource)
         register<HashingService>(hashingService)
-        register<UserRepository>(userRepository)
         register<TokenService>(tokenService)
         register<TokenConfig>(tokenConfig)
+
+        val userRepository = UserRepositoryImpl(get<UserDataSource>())
+        register<UserRepository>(userRepository)
+
+        val documentsManager = DocumentsManager(
+            docsDataSource = get<DocsDataSource>()
+        )
+        register<DocumentsManager>(documentsManager)
     }
 }
 

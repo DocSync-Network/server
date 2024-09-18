@@ -5,11 +5,17 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-sealed interface DocListAction {
+sealed class DocListAction {
     @Serializable
     @SerialName("getDoc")
-    data class GetDoc(val id: ID) : DocListAction
+    data class GetDoc(val docId: ID) : DocListAction()
+    @Serializable
+    @SerialName("createDoc")
+    data class CreateDoc(val docName: String) : DocListAction()
+    @Serializable
+    @SerialName("removeDoc")
+    data class RemoveDoc(val docId: ID) : DocListAction()
     @Serializable
     @SerialName("getAllDocs")
-    data object GetAllDocs : DocListAction
+    data object GetAllDocs : DocListAction()
 }

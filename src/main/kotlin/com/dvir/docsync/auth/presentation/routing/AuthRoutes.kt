@@ -12,8 +12,8 @@ import com.dvir.docsync.auth.presentation.communication.send.generateAndSendToke
 import com.dvir.docsync.auth.presentation.communication.send.sendError
 import com.dvir.docsync.auth.presentation.communication.send.sendResponse
 import com.dvir.docsync.core.model.User
-import com.dvir.docsync.core.model.UserData
 import com.dvir.docsync.auth.presentation.communication.requests.AuthRequest
+import com.dvir.docsync.core.user.UserManager
 import io.ktor.http.*
 import io.ktor.server.request.*
 import io.ktor.server.routing.*
@@ -50,6 +50,13 @@ fun Route.login(
             call.sendError(
                 "Invalid username or password",
                 HttpStatusCode.Unauthorized
+            )
+            return@post
+        }
+        if (UserManager.isUserOnline(request.username)) {
+            call.sendError(
+                "User is already online",
+                HttpStatusCode.Conflict
             )
             return@post
         }
@@ -99,7 +106,6 @@ fun Route.signup(
             username = request.username,
             password = saltedHash.hash,
             salt = saltedHash.salt,
-            data = UserData(),
         )
 
         val userId = userRepository.addUser(user)

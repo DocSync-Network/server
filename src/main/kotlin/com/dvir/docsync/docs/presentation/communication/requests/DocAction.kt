@@ -6,23 +6,23 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-sealed interface DocAction {
+sealed class DocAction {
     @Serializable
     @SerialName("edit")
-    data class Edit(val config: CharacterConfig)
+    data class Edit(val config: CharacterConfig): DocAction()
     @Serializable
     @SerialName("add")
-    data class Add(val char: Character) : DocAction
+    data class Add(val char: Character) : DocAction()
     @Serializable
     @SerialName("cursor")
-    data class UpdateCursor(val pos: Int) : DocAction
+    data class UpdateCursor(val pos: Int) : DocAction()
     @Serializable
     @SerialName("selection")
     data class UpdateSelection(
         val start: Int,
         val end: Int
-    ) : DocAction
+    ) : DocAction()
     @Serializable
     @SerialName("remove")
-    data object Remove : DocAction
+    data object Remove : DocAction()
 }
