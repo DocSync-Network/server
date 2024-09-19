@@ -1,5 +1,6 @@
 package com.dvir.docsync.docs.presentation.communication.responses
 
+import com.dvir.docsync.docs.domain.managers.cursor.CursorData
 import com.dvir.docsync.docs.domain.model.Character
 import com.dvir.docsync.docs.domain.model.CharacterConfig
 import kotlinx.serialization.SerialName
@@ -18,8 +19,8 @@ sealed class DocActionResponse {
     data class Edited(val username: String, val config: CharacterConfig) : DocActionResponse()
     @Serializable
     @SerialName("updatedCursor")
-    data class UpdatedCursor(val username: String, val pos: Int) : DocActionResponse()
+    data class UpdatedCursorData(val username: String, val data: CursorData) : DocActionResponse()
     @Serializable
-    @SerialName("updatedSelection")
-    data class UpdatedSelection(val username: String, val start: Int, val end: Int) : DocActionResponse()
+    @SerialName("accessRemoved")
+    data object AccessRemoved : DocActionResponse()
 }

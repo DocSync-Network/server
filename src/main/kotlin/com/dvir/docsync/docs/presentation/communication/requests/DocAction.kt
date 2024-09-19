@@ -1,5 +1,6 @@
 package com.dvir.docsync.docs.presentation.communication.requests
 
+import com.dvir.docsync.docs.domain.managers.cursor.CursorData
 import com.dvir.docsync.docs.domain.model.Character
 import com.dvir.docsync.docs.domain.model.CharacterConfig
 import kotlinx.serialization.SerialName
@@ -14,14 +15,14 @@ sealed class DocAction {
     @SerialName("add")
     data class Add(val char: Character) : DocAction()
     @Serializable
-    @SerialName("cursor")
-    data class UpdateCursor(val pos: Int) : DocAction()
+    @SerialName("addAccess")
+    data class AddAccess(val username: String, val addedUsername: String) : DocAction()
     @Serializable
-    @SerialName("selection")
-    data class UpdateSelection(
-        val start: Int,
-        val end: Int
-    ) : DocAction()
+    @SerialName("removeAccess")
+    data class RemoveAccess(val username: String, val removedUsername: String) : DocAction()
+    @Serializable
+    @SerialName("cursor")
+    data class UpdateCursorData(val data: CursorData) : DocAction()
     @Serializable
     @SerialName("remove")
     data object Remove : DocAction()

@@ -65,7 +65,7 @@ fun Route.connect(
                                 }
                                 is DocListAction.GetDoc -> {
                                     val documentResult = documentsManager.addUserToDoc(
-                                        onlineUser.username,
+                                        onlineUser,
                                         request.docId
                                     )
                                     if (documentResult is Result.Success) {
@@ -98,8 +98,34 @@ fun Route.connect(
                                 }
                             }
                         } else if (state is UserState.InDocument) {
-                            val request = Json.decodeFromString<DocAction>(requestBody)
+                            when (val request = Json.decodeFromString<DocAction>(requestBody)) {
+                                is DocAction.Add -> {
+                                    documentsManager.addCharacter(
+                                        user = onlineUser,
+                                        character = request.char
+                                    )
+                                }
+                                is DocAction.AddAccess -> documentsManager.addAccess(
+                                    user = onlineUser,
+                                    addedUsername = request.addedUsername
+                                )
+                                is DocAction.RemoveAccess -> documentsManager.removeAccess(
+                                    user = onlineUser,
+                                    removedUsername = request.removedUsername
+                                )
+                                is DocAction.Edit -> documentsManager.editCharacters(
+                                    user = onlineUser,
+                                    config = request.config
+                                )
+                                is DocAction.UpdateCursorData -> documentsManager.updateCursor(
+                                    user = onlineUser,
+                                    cursorData = request.data
+                                )
+                                DocAction.Remove -> {
+                                    documentsManager.removeCharacter(onlineUser)
+                                }
 
+                            }
                         }
                     }
                 }

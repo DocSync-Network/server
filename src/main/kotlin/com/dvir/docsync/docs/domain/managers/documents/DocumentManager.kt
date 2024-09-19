@@ -1,18 +1,45 @@
 package com.dvir.docsync.docs.domain.managers.documents
 
 import com.dvir.docsync.core.constants.Constants
+import com.dvir.docsync.core.user.OnlineUser
 import com.dvir.docsync.docs.domain.managers.cursor.CursorAction
+import com.dvir.docsync.docs.domain.managers.cursor.CursorData
 import com.dvir.docsync.docs.domain.managers.cursor.CursorManager
 import com.dvir.docsync.docs.domain.managers.cursor.CursorPosition
 import com.dvir.docsync.docs.domain.model.Character
+import com.dvir.docsync.docs.domain.model.CharacterConfig
 import com.dvir.docsync.docs.domain.model.Document
+import java.util.concurrent.ConcurrentHashMap
 
 class DocumentManager(
     private val document: Document,
     private val cursorManager: CursorManager,
-    var activeUsers: Int = 1
+    val activeUsers: ConcurrentHashMap<String, OnlineUser> = ConcurrentHashMap()
 ) {
-    fun getCursorManager(): CursorManager = cursorManager
+    @Synchronized
+    fun addAccess(ownerUsername: String, addedUsername: String) {
+        if (ownerUsername != document.owner)
+            return
+
+        document.addAccessTo(addedUsername)
+    }
+
+    @Synchronized
+    fun removeAccess(ownerUsername: String, removedUsername: String) {
+        if (ownerUsername != document.owner)
+            return
+
+        document.removeAccessTo(removedUsername)
+    }
+
+    @Synchronized
+    fun updateCursor(username: String, cursorData: CursorData) {
+        if (cursorData.end == null) {
+            cursorManager.updatePosition(username, cursorData.start)
+        } else {
+            cursorManager.updateSelection(username, cursorData.start, cursorData.end)
+        }
+    }
 
     @Synchronized
     fun addCharacter(character: Character, username: String) {
@@ -33,7 +60,18 @@ class DocumentManager(
     }
 
     @Synchronized
-    fun removeCharacter(username: String, length: Int) {
+    fun editCharacters(username: String, config: CharacterConfig) {
+        val cursorData = cursorManager.getCursors()[username] ?: return
+        val (_, endPos) = cursorData
+
+        if (endPos == null)
+            return
+
+        document.editCharacters(config, cursorData)
+    }
+
+    @Synchronized
+    fun removeCharacters(username: String) {
         val cursorData = cursorManager.getCursors()[username] ?: return
         val (startPos, endPos) = cursorData
 
@@ -42,14 +80,8 @@ class DocumentManager(
             return
         }
 
-        document.removeCharacters(startPos, length)
-
-        val removeIndex = positionToIndex(startPos) - length
-        val removePosition = indexToPosition(removeIndex)
-        cursorManager.adjustCursors(removePosition, CursorAction.Remove)
-
-        val newCursorPosition = indexToPosition(removeIndex)
-        cursorManager.updatePosition(username, newCursorPosition)
+        document.removeCharacter(startPos)
+        cursorManager.adjustCursors(startPos, CursorAction.Remove)
     }
 
     private fun removeSelection(username: String, startPos: CursorPosition, endPos: CursorPosition) {
@@ -68,18 +100,6 @@ class DocumentManager(
         }
 
         cursorManager.updatePosition(username, startPos)
-    }
-
-    private fun insertCharacter(character: Character, position: CursorPosition, username: String) {
-        val insertIndex = positionToIndex(position)
-
-       document.content.add(insertIndex, character)
-
-        val actionPosition = CursorPosition(line = position.line, column = position.column)
-        cursorManager.adjustCursors(actionPosition, CursorAction.Add)
-
-        val newCursorPosition = indexToPosition(insertIndex + 1)
-        cursorManager.updatePosition(username, newCursorPosition)
     }
 
     private fun indexToPosition(index: Int): CursorPosition {
