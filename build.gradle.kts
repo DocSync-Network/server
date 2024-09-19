@@ -43,6 +43,7 @@ dependencies {
 
     implementation("org.litote.kmongo:kmongo:$kmongo_version")
     implementation("org.litote.kmongo:kmongo-coroutine:$kmongo_version")
+    implementation("org.litote.kmongo:kmongo-coroutine-serialization:$kmongo_version")
 
     implementation("commons-codec:commons-codec:$commons_codec_version")
 }

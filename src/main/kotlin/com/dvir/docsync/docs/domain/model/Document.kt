@@ -56,7 +56,6 @@ data class Document(
     fun addCharacter(position: CursorPosition, character: Character) {
         val index = positionToIndex(position)
         content.add(index, character)
-        println("content: $content")
     }
 
 

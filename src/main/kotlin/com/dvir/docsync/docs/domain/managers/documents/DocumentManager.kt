@@ -44,7 +44,6 @@ class DocumentManager(
     @Synchronized
     fun addCharacter(character: Character, username: String) {
         val cursorData = cursorManager.getCursors()[username] ?: return
-        println("adding character in doc")
         val (startPos, endPos) = cursorData
 
         if (endPos != null) {

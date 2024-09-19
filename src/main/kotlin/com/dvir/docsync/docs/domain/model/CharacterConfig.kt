@@ -4,8 +4,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class CharacterConfig(
-    val isBold: Boolean = false,
-    val isItalic: Boolean = false,
-    val isUnderlined: Boolean = false,
-    val color: String = "#000000"
+    val isBold: Boolean,
+    val isItalic: Boolean,
+    val isUnderlined: Boolean,
+    val color: String
 )
