@@ -46,7 +46,7 @@ fun Route.connect(
                 )
                 return@webSocket
             }
-            val onlineUser = OnlineUser(
+            var onlineUser = OnlineUser(
                 username = user.username,
                 socket = this
             )
@@ -55,8 +55,8 @@ fun Route.connect(
                 incoming.consumeEach { frame ->
                     if (frame is Frame.Text) {
                         val requestBody = frame.readText()
-
                         val state = UserManager.getUser(user.username)!!.state
+                        onlineUser = onlineUser.copy(state = state)
                         if (state is UserState.InMain) {
                             when (val request = Json.decodeFromString<DocListAction>(requestBody)) {
                                 DocListAction.GetAllDocs -> {
@@ -99,12 +99,10 @@ fun Route.connect(
                             }
                         } else if (state is UserState.InDocument) {
                             when (val request = Json.decodeFromString<DocAction>(requestBody)) {
-                                is DocAction.Add -> {
-                                    documentsManager.addCharacter(
+                                is DocAction.Add -> documentsManager.addCharacter(
                                         user = onlineUser,
                                         character = request.char
                                     )
-                                }
                                 is DocAction.AddAccess -> documentsManager.addAccess(
                                     user = onlineUser,
                                     addedUsername = request.addedUsername
@@ -124,7 +122,9 @@ fun Route.connect(
                                 DocAction.Remove -> {
                                     documentsManager.removeCharacter(onlineUser)
                                 }
-
+                                DocAction.Save -> {
+                                    documentsManager.saveDocument(state.documentId)
+                                }
                             }
                         }
                     }

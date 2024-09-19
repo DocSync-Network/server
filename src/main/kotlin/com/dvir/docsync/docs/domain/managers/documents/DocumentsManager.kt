@@ -9,6 +9,7 @@ import com.dvir.docsync.docs.domain.model.Document
 import com.dvir.docsync.core.model.Result
 import com.dvir.docsync.core.user.OnlineUser
 import com.dvir.docsync.docs.domain.managers.cursor.CursorData
+import com.dvir.docsync.docs.domain.managers.cursor.CursorPosition
 import com.dvir.docsync.docs.domain.model.Character
 import com.dvir.docsync.docs.domain.model.CharacterConfig
 import com.dvir.docsync.docs.presentation.communication.responses.DocActionResponse
@@ -102,7 +103,8 @@ class DocumentsManager(
             owner = username,
             name = docName,
             creationDate = System.currentTimeMillis(),
-            access = mutableListOf(username)
+            access = mutableListOf(username),
+            content = mutableListOf()
         )
         val wasAcknowledged = docsDataSource.insertDoc(document)
         return if (wasAcknowledged) {
@@ -118,10 +120,8 @@ class DocumentsManager(
             return Result.Error("You are not allowed to delete this document")
         }
 
-        println("Removing $docId")
         val wasAcknowledged = docsDataSource.removeDoc(docId)
         return if (wasAcknowledged) {
-            println("Removed")
             Result.Success(getAllDocs(username))
         } else {
             Result.Error("Could not create document")
@@ -139,7 +139,14 @@ class DocumentsManager(
             val document = docsDataSource.getDocById(documentId) ?: return Result.Error("Document not found")
             onlineDocuments[documentId] = DocumentManager(
                 document,
-                CursorManager(),
+                CursorManager().apply {
+                    updatePosition(
+                        user.username,
+                        cursorPosition = CursorPosition(
+                            line = 0, column = 0
+                        )
+                    )
+                },
             )
         }
 
@@ -160,10 +167,15 @@ class DocumentsManager(
         onlineDocument.activeUsers.remove(username)
 
         if (onlineDocument.activeUsers.size == 0) {
-            docsDataSource.updateDoc(onlineDocument.getDocument())
+            saveDocument(onlineDocument.getDocument().id)
             onlineDocuments.remove(user.state.documentId)
         }
         UserManager.changeUserState(username, UserState.InMain)
         return Result.Success(Unit)
+    }
+
+    suspend fun saveDocument(docId: ID) {
+        val onlineDocument = onlineDocuments[docId]?.getDocument() ?: return
+        docsDataSource.updateDoc(onlineDocument)
     }
 }

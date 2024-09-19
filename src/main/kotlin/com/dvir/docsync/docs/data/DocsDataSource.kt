@@ -27,6 +27,6 @@ class DocsDataSource(
     }
 
     suspend fun updateDoc(doc: Document): Boolean {
-        return docs.updateOneById(doc.id, doc).wasAcknowledged()
+        return docs.replaceOneById(doc.id, doc).wasAcknowledged()
     }
 }

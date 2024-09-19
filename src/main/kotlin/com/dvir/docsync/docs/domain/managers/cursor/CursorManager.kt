@@ -8,7 +8,6 @@ class CursorManager {
 
     fun getCursors(): ConcurrentHashMap<String, CursorData> = cursors
 
-
     fun updatePosition(username: String, cursorPosition: CursorPosition) {
         cursors[username] = CursorData(start = cursorPosition, end = null)
     }

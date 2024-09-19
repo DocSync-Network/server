@@ -16,14 +16,17 @@ sealed class DocAction {
     data class Add(val char: Character) : DocAction()
     @Serializable
     @SerialName("addAccess")
-    data class AddAccess(val username: String, val addedUsername: String) : DocAction()
+    data class AddAccess(val addedUsername: String) : DocAction()
     @Serializable
     @SerialName("removeAccess")
-    data class RemoveAccess(val username: String, val removedUsername: String) : DocAction()
+    data class RemoveAccess(val removedUsername: String) : DocAction()
     @Serializable
     @SerialName("cursor")
     data class UpdateCursorData(val data: CursorData) : DocAction()
     @Serializable
     @SerialName("remove")
     data object Remove : DocAction()
+    @Serializable
+    @SerialName("save")
+    data object Save : DocAction()
 }

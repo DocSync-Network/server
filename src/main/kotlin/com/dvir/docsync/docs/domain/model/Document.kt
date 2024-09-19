@@ -20,7 +20,7 @@ data class Document(
     val name: String,
     val creationDate: Long,
     val access: MutableList<String>,
-    val content: MutableList<Character> = mutableListOf()
+    val content: MutableList<Character>,
 ) {
     fun addAccessTo(username: String) {
         access.add(username)
@@ -56,6 +56,7 @@ data class Document(
     fun addCharacter(position: CursorPosition, character: Character) {
         val index = positionToIndex(position)
         content.add(index, character)
+        println("content: $content")
     }
 
 
