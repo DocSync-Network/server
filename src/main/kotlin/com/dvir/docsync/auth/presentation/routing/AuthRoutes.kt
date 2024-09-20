@@ -29,8 +29,9 @@ fun Route.login(
             call.sendError("Invalid request")
             return@post
         }
+        val username = request.username.lowercase()
 
-        val user = userRepository.getUserByUsername(request.username)
+        val user = userRepository.getUserByUsername(username)
         if (user == null) {
             call.sendError(
                 "Invalid username or password",
@@ -53,7 +54,7 @@ fun Route.login(
             )
             return@post
         }
-        if (UserManager.isUserOnline(request.username)) {
+        if (UserManager.isUserOnline(username)) {
             call.sendError(
                 "User is already online",
                 HttpStatusCode.Conflict
@@ -83,8 +84,9 @@ fun Route.signup(
             call.sendError("Invalid request")
             return@post
         }
+        val username = request.username.lowercase()
 
-        val usernameResult = Verifier.verifyUsername(request.username)
+        val usernameResult = Verifier.verifyUsername(username)
         val passwordResult = Verifier.verifyPassword(request.password)
         if (!usernameResult.isValid) {
             call.sendError(usernameResult.message!!)
@@ -95,7 +97,7 @@ fun Route.signup(
             return@post
         }
 
-        val isUserExists = userRepository.getUserByUsername(request.username) != null
+        val isUserExists = userRepository.getUserByUsername(username) != null
         if (isUserExists) {
             call.sendError("This username is already taken", HttpStatusCode.Conflict)
             return@post
@@ -103,7 +105,7 @@ fun Route.signup(
 
         val saltedHash = hashingService.generateSaltedHash(request.password)
         val user = User(
-            username = request.username,
+            username = username,
             password = saltedHash.hash,
             salt = saltedHash.salt,
         )
