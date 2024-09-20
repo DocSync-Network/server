@@ -24,7 +24,7 @@ fun Route.login(
     tokenService: TokenService,
     tokenConfig: TokenConfig
 ) {
-    post("/login") {
+    post("/auth/login") {
         val request = call.receiveNullable<AuthRequest.Auth>() ?: kotlin.run {
             call.sendError("Invalid request")
             return@post
@@ -79,7 +79,7 @@ fun Route.signup(
     tokenService: TokenService,
     tokenConfig: TokenConfig
 ) {
-    post("/signup") {
+    post("/auth/signup") {
         val request = call.receiveNullable<AuthRequest.Auth>() ?: kotlin.run {
             call.sendError("Invalid request")
             return@post
