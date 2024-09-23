@@ -1,6 +1,5 @@
 package com.dvir.docsync.docs.domain.managers.cursor
 
-import com.dvir.docsync.core.constants.Constants
 import java.util.concurrent.ConcurrentHashMap
 
 class CursorManager {
@@ -49,24 +48,14 @@ class CursorManager {
                 if (cursorPosition.column < actionPosition.column) {
                     null
                 } else {
-                    val newColumn = cursorPosition.column + 1
-                    if (newColumn == Constants.LINE_LENGTH) {
-                        CursorPosition(line = cursorPosition.line + 1, column = 0)
-                    } else {
-                        cursorPosition.copy(column = newColumn)
-                    }
+                    cursorPosition.copy(column = cursorPosition.column + 1)
                 }
             }
             CursorAction.Remove -> {
                 if (cursorPosition.column <= actionPosition.column) {
                     null
                 } else {
-                    val newColumn = cursorPosition.column - 1
-                    if (newColumn < 0) {
-                        CursorPosition(line = cursorPosition.line - 1, column = Constants.LINE_LENGTH)
-                    } else {
-                        cursorPosition.copy(column = newColumn)
-                    }
+                    cursorPosition.copy(column = cursorPosition.column - 1)
                 }
             } else -> null
         }

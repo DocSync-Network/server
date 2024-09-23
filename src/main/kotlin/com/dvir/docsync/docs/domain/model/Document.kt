@@ -1,6 +1,5 @@
 package com.dvir.docsync.docs.domain.model
 
-import com.dvir.docsync.core.constants.Constants
 import com.dvir.docsync.core.model.ID
 import com.dvir.docsync.docs.domain.managers.cursor.CursorData
 import com.dvir.docsync.docs.domain.managers.cursor.CursorPosition
@@ -46,7 +45,8 @@ data class Document(
                         isBold = characterConfig.isBold,
                         isItalic = characterConfig.isItalic,
                         isUnderlined = characterConfig.isUnderlined,
-                        color = characterConfig.color
+                        color = characterConfig.color,
+                        fontSize = characterConfig.fontSize
                     )
                 )
             }
@@ -77,13 +77,7 @@ data class Document(
                     line++
                     column = 0
                 }
-                else -> {
-                    column++
-                    if (column == Constants.LINE_LENGTH) {
-                        line++
-                        column = 0
-                    }
-                }
+                else -> column++
             }
             index++
         }

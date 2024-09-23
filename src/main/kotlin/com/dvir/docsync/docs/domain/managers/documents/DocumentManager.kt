@@ -1,6 +1,5 @@
 package com.dvir.docsync.docs.domain.managers.documents
 
-import com.dvir.docsync.core.constants.Constants
 import com.dvir.docsync.core.user.OnlineUser
 import com.dvir.docsync.docs.domain.managers.cursor.CursorAction
 import com.dvir.docsync.docs.domain.managers.cursor.CursorData
@@ -112,13 +111,7 @@ class DocumentManager(
                     line++
                     column = 0
                 }
-                else -> {
-                    column++
-                    if (column == Constants.LINE_LENGTH) {
-                        line++
-                        column = 0
-                    }
-                }
+                else -> column++
             }
         }
         return CursorPosition(line, column)
@@ -137,13 +130,7 @@ class DocumentManager(
                     line++
                     column = 0
                 }
-                else -> {
-                    column++
-                    if (column == Constants.LINE_LENGTH) {
-                        line++
-                        column = 0
-                    }
-                }
+                else -> column++
             }
             index++
         }
