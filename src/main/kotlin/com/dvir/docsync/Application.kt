@@ -21,11 +21,10 @@ fun main() {
 }
 
 fun Application.module() {
-    authModule()
-
     install(WebSockets)
     configureSerialization()
     configureMonitoring()
     configureSecurity(ServiceLocator.get<TokenConfig>())
     configureConnectRouting()
+    authModule()
 }

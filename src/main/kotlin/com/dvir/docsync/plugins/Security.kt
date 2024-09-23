@@ -3,7 +3,6 @@ package com.dvir.docsync.plugins
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.dvir.docsync.auth.domain.token.TokenConfig
-import io.ktor.http.auth.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
@@ -22,14 +21,6 @@ fun Application.configureSecurity(config: TokenConfig) {
             )
             validate { credential ->
                 if (credential.payload.audience.contains(config.audience)) JWTPrincipal(credential.payload) else null
-            }
-            authHeader { call ->
-                val token = call.request.queryParameters["token"]
-                if (token != null) {
-                    HttpAuthHeader.Single("Bearer", token)
-                } else {
-                    null
-                }
             }
         }
     }

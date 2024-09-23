@@ -15,8 +15,11 @@ import com.dvir.docsync.core.model.User
 import com.dvir.docsync.auth.presentation.communication.requests.AuthRequest
 import com.dvir.docsync.core.user.UserManager
 import io.ktor.http.*
+import io.ktor.server.auth.*
 import io.ktor.server.request.*
+import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import io.ktor.server.routing.get
 
 fun Route.login(
     userRepository: UserRepository,
@@ -121,5 +124,13 @@ fun Route.signup(
             tokenConfig = tokenConfig,
             TokenClaim(name = "id", value = userId)
         )
+    }
+}
+
+fun Route.validate() {
+    authenticate {
+        get("/auth/authenticate") {
+            call.respond(HttpStatusCode.OK)
+        }
     }
 }

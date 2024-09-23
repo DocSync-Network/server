@@ -16,5 +16,6 @@ fun Application.configureAuthRouting(
     routing {
         login(userRepository, hashingService, tokenService, tokenConfig)
         signup(userRepository, hashingService, tokenService, tokenConfig)
+        validate()
     }
 }
