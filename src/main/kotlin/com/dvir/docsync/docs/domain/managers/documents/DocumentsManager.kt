@@ -71,8 +71,9 @@ class DocumentsManager(
 
         val documentManager = onlineDocuments[user.state.documentId] ?: return
         documentManager.addCharacter(character, user.username)
-        documentManager.activeUsers.forEach { (_, user) ->
-            user.socket.sendResponse(DocActionResponse.Added(user.username, character))
+        documentManager.activeUsers.forEach { (username, activeUser) ->
+            if (username != user.username)
+                activeUser.socket.sendResponse(DocActionResponse.Added(username, character))
         }
     }
 
@@ -82,8 +83,9 @@ class DocumentsManager(
 
         val documentManager = onlineDocuments[user.state.documentId] ?: return
         documentManager.removeCharacters(user.username)
-        documentManager.activeUsers.forEach { (_, user) ->
-            user.socket.sendResponse(DocActionResponse.Remove(user.username))
+        documentManager.activeUsers.forEach { (username, activeUser) ->
+            if (username != user.username)
+                activeUser.socket.sendResponse(DocActionResponse.Remove(username))
         }
     }
 
@@ -93,8 +95,9 @@ class DocumentsManager(
 
         val documentManager = onlineDocuments[user.state.documentId] ?: return
         documentManager.editCharacters(user.username, config)
-        documentManager.activeUsers.forEach { (_, user) ->
-            user.socket.sendResponse(DocActionResponse.Edited(user.username, config))
+        documentManager.activeUsers.forEach { (username, activeUser) ->
+            if (username != user.username)
+                activeUser.socket.sendResponse(DocActionResponse.Edited(user.username, config))
         }
     }
 
