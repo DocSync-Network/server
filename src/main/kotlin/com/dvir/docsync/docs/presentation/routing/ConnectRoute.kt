@@ -55,9 +55,11 @@ fun Route.connect(
                 incoming.consumeEach { frame ->
                     if (frame is Frame.Text) {
                         val requestBody = frame.readText()
+                        println(requestBody)
                         val state = UserManager.getUser(user.username)!!.state
                         onlineUser = onlineUser.copy(state = state)
                         if (state is UserState.InMain) {
+                            println("here")
                             when (val request = Json.decodeFromString<DocListAction>(requestBody)) {
                                 DocListAction.GetAllDocs -> {
                                     val docs = documentsManager.getAllDocs(onlineUser.username)
