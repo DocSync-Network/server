@@ -10,7 +10,8 @@ import com.dvir.docsync.docs.presentation.communication.requests.DocAction
 import com.dvir.docsync.docs.presentation.communication.requests.DocListAction
 import com.dvir.docsync.docs.presentation.communication.responses.DocListResponse
 import com.dvir.docsync.docs.presentation.communication.responses.ErrorResponse
-import com.dvir.docsync.docs.presentation.communication.send.sendResponse
+import com.dvir.docsync.docs.presentation.communication.send.sendDocListResponse
+import com.dvir.docsync.docs.presentation.communication.send.sendErrorResponse
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
 import io.ktor.server.routing.*
@@ -61,7 +62,7 @@ fun Route.connect(
                             when (val request = Json.decodeFromString<DocListAction>(requestBody)) {
                                 DocListAction.GetAllDocs -> {
                                     val docs = documentsManager.getAllDocs(onlineUser.username)
-                                    sendResponse(DocListResponse.Docs(docs))
+                                    sendDocListResponse(DocListResponse.Docs(docs))
                                 }
                                 is DocListAction.GetDoc -> {
                                     val documentResult = documentsManager.addUserToDoc(
@@ -69,9 +70,9 @@ fun Route.connect(
                                         request.docId
                                     )
                                     if (documentResult is Result.Success) {
-                                        sendResponse(DocListResponse.Doc(documentResult.data!!))
+                                        sendDocListResponse(DocListResponse.Doc(documentResult.data!!))
                                     } else {
-                                        sendResponse(ErrorResponse(documentResult.message!!))
+                                        sendErrorResponse(ErrorResponse(documentResult.message!!))
                                     }
                                 }
                                 is DocListAction.CreateDoc -> {
@@ -80,9 +81,9 @@ fun Route.connect(
                                         docName = request.docName
                                     )
                                     if (documentResult is Result.Success) {
-                                        sendResponse(DocListResponse.Doc(documentResult.data!!))
+                                        sendDocListResponse(DocListResponse.Doc(documentResult.data!!))
                                     } else {
-                                        sendResponse(ErrorResponse(documentResult.message!!))
+                                        sendErrorResponse(ErrorResponse(documentResult.message!!))
                                     }
                                 }
                                 is DocListAction.RemoveDoc -> {
@@ -91,9 +92,9 @@ fun Route.connect(
                                         docId = request.docId
                                     )
                                     if (documentResult is Result.Success) {
-                                        sendResponse(DocListResponse.Docs(documentResult.data!!))
+                                        sendDocListResponse(DocListResponse.Docs(documentResult.data!!))
                                     } else {
-                                        sendResponse(ErrorResponse(documentResult.message!!))
+                                        sendErrorResponse(ErrorResponse(documentResult.message!!))
                                     }
                                 }
                             }

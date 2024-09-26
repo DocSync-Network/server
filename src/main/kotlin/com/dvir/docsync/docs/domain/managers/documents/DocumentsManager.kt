@@ -14,7 +14,8 @@ import com.dvir.docsync.docs.domain.model.Character
 import com.dvir.docsync.docs.domain.model.CharacterConfig
 import com.dvir.docsync.docs.presentation.communication.responses.DocActionResponse
 import com.dvir.docsync.docs.presentation.communication.responses.DocListResponse
-import com.dvir.docsync.docs.presentation.communication.send.sendResponse
+import com.dvir.docsync.docs.presentation.communication.send.sendDocActionResponse
+import com.dvir.docsync.docs.presentation.communication.send.sendDocListResponse
 import java.util.concurrent.ConcurrentHashMap
 
 class DocumentsManager(
@@ -30,7 +31,7 @@ class DocumentsManager(
         documentManager.addAccess(user.username, addedUsername)
 
         val addedUser = UserManager.getUser(addedUsername) ?: return
-        addedUser.socket.sendResponse(
+        addedUser.socket.sendDocListResponse(
             DocListResponse.Docs(getAllDocs(addedUsername))
         )
     }
@@ -48,7 +49,7 @@ class DocumentsManager(
         if (addedUser.state.documentId != documentManager.getDocument().id)
             return
 
-        addedUser.socket.sendResponse(
+        addedUser.socket.sendDocActionResponse(
             DocActionResponse.AccessRemoved
         )
         UserManager.changeUserState(removedUsername, UserState.InMain)
@@ -61,7 +62,7 @@ class DocumentsManager(
         val documentManager = onlineDocuments[user.state.documentId] ?: return
         documentManager.updateCursor(user.username, cursorData)
         documentManager.activeUsers.forEach { (_, user) ->
-            user.socket.sendResponse(DocActionResponse.UpdatedCursorData(user.username, cursorData))
+            user.socket.sendDocActionResponse(DocActionResponse.UpdatedCursorData(user.username, cursorData))
         }
     }
 
@@ -73,7 +74,7 @@ class DocumentsManager(
         documentManager.addCharacter(character, user.username)
         documentManager.activeUsers.forEach { (username, activeUser) ->
             if (username != user.username)
-                activeUser.socket.sendResponse(DocActionResponse.Added(username, character))
+                activeUser.socket.sendDocActionResponse(DocActionResponse.Added(username, character))
         }
     }
 
@@ -85,7 +86,7 @@ class DocumentsManager(
         documentManager.removeCharacters(user.username)
         documentManager.activeUsers.forEach { (username, activeUser) ->
             if (username != user.username)
-                activeUser.socket.sendResponse(DocActionResponse.Remove(username))
+                activeUser.socket.sendDocActionResponse(DocActionResponse.Remove(username))
         }
     }
 
@@ -97,7 +98,7 @@ class DocumentsManager(
         documentManager.editCharacters(user.username, config)
         documentManager.activeUsers.forEach { (username, activeUser) ->
             if (username != user.username)
-                activeUser.socket.sendResponse(DocActionResponse.Edited(user.username, config))
+                activeUser.socket.sendDocActionResponse(DocActionResponse.Edited(user.username, config))
         }
     }
 
