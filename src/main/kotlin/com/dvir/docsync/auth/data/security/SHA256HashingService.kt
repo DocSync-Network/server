@@ -19,9 +19,6 @@ class SHA256HashingService: HashingService {
     }
 
     override fun verify(value: String, saltedHash: SaltedHash): Boolean {
-        val concatenated = saltedHash.salt + value
-        val hashToVerify = DigestUtils.sha256Hex(concatenated)
-
         return DigestUtils.sha256Hex(saltedHash.salt + value) == saltedHash.hash
     }
 }
