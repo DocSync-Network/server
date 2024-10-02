@@ -126,6 +126,10 @@ fun Route.connect(
                                 DocAction.Save -> {
                                     documentsManager.saveDocument(state.documentId)
                                 }
+                                DocAction.LeaveDoc -> {
+                                    documentsManager.removeUserFromDoc(onlineUser.username)
+                                    onlineUser = onlineUser.copy(state = UserState.InMain)
+                                }
                             }
                         }
                     }
