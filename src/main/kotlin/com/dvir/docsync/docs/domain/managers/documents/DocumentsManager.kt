@@ -61,8 +61,10 @@ class DocumentsManager(
 
         val documentManager = onlineDocuments[user.state.documentId] ?: return
         documentManager.updateCursor(user.username, cursorData)
-        documentManager.activeUsers.forEach { (_, user) ->
-            user.socket.sendDocActionResponse(DocActionResponse.UpdatedCursorData(user.username, cursorData))
+        documentManager.activeUsers.forEach { (username, activeUser) ->
+            if (username != user.username) {
+                activeUser.socket.sendDocActionResponse(DocActionResponse.UpdatedCursorData(username, cursorData))
+            }
         }
     }
 
