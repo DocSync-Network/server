@@ -30,6 +30,8 @@ class DocumentsManager(
         val documentManager = onlineDocuments[user.state.documentId] ?: return
         documentManager.addAccess(user.username, addedUsername)
 
+        saveDocument(user.state.documentId)
+
         val addedUser = UserManager.getUser(addedUsername) ?: return
         addedUser.socket.sendDocListResponse(
             DocListResponse.Docs(getAllDocs(addedUsername))

@@ -20,6 +20,9 @@ class DocumentManager(
         if (ownerUsername != document.owner)
             return
 
+        if (document.access.contains(addedUsername))
+            return
+
         document.addAccessTo(addedUsername)
     }
 
