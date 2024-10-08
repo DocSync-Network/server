@@ -67,7 +67,8 @@ fun Route.login(
 
         val token = tokenService.generate(
             config = tokenConfig,
-            TokenClaim(name = "id", value = user.id!!)
+            TokenClaim(name = "id", value = user.id!!),
+            TokenClaim(name = "username", value = user.username)
         )
 
         call.sendResponse(
@@ -122,7 +123,8 @@ fun Route.signup(
         call.generateAndSendToken(
             tokenService = tokenService,
             tokenConfig = tokenConfig,
-            TokenClaim(name = "id", value = userId)
+            TokenClaim(name = "id", value = userId),
+            TokenClaim(name = "username", value = user.username)
         )
     }
 }
