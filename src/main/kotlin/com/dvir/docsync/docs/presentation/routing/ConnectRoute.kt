@@ -128,7 +128,7 @@ fun Route.connect(
                                 }
                                 DocAction.LeaveDoc -> {
                                     documentsManager.removeUserFromDoc(onlineUser.username)
-                                    onlineUser = onlineUser.copy(state = UserState.InMain)
+                                    UserManager.changeUserState(onlineUser.username, UserState.InMain)
                                 }
                             }
                         }

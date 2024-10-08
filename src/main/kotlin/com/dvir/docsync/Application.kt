@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory
 
 fun main() {
     ServiceLocator.setup()
-    (LoggerFactory.getILoggerFactory() as LoggerContext).getLogger("org.mongodb.driver").setLevel(Level.ERROR)
+    (LoggerFactory.getILoggerFactory() as LoggerContext).getLogger("org.mongodb.driver").level = Level.ERROR
 
     embeddedServer(Netty, port = 8080, host = "0.0.0.0", module = Application::module)
         .start(wait = true)
