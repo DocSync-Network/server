@@ -112,7 +112,8 @@ class DocumentsManager(
             name = docName,
             creationDate = System.currentTimeMillis(),
             access = mutableListOf(username),
-            content = mutableListOf()
+            content = mutableListOf(),
+            editedDetails = mutableListOf()
         )
         val wasAcknowledged = docsDataSource.insertDoc(document)
         return if (wasAcknowledged) {
@@ -156,6 +157,7 @@ class DocumentsManager(
                     )
                 },
             )
+            onlineDocuments[documentId]!!.changeEditDate(user.username)
         }
 
         onlineDocuments[documentId]!!.activeUsers[user.username] = user

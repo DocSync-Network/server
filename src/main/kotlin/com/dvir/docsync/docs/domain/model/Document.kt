@@ -18,9 +18,20 @@ data class Document(
     val owner: String,
     val name: String,
     val creationDate: Long,
+    val editedDetails: MutableList<String>,
     val access: MutableList<String>,
     val content: MutableList<Character>,
 ) {
+    fun changeEditDate(username: String, time: Long) {
+        if (editedDetails.size == 2) {
+            editedDetails[0] = username
+            editedDetails[1] = time.toString()
+        } else {
+            editedDetails.add(username)
+            editedDetails.add(time.toString())
+        }
+    }
+
     fun addAccessTo(username: String) {
         access.add(username)
     }

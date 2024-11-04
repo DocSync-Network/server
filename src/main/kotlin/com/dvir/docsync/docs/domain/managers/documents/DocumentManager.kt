@@ -86,6 +86,13 @@ class DocumentManager(
         cursorManager.adjustCursors(startPos, CursorAction.Remove)
     }
 
+    @Synchronized
+    fun changeEditDate(username: String) {
+        val time = System.currentTimeMillis()
+
+        document.changeEditDate(username, time)
+    }
+
     private fun removeSelection(username: String, startPos: CursorPosition, endPos: CursorPosition) {
         val startIndex = positionToIndex(startPos)
         val endIndex = positionToIndex(endPos)
